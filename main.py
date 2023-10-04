@@ -21,22 +21,22 @@ def main():
         )
         # sys.exit(1)
 
-    repo_name = sys.argv[1].split("/")[1] if "/" in sys.argv[1] else sys.argv[1]
+    repo_name = sys.argv[1].split("/")[-1]
 
     # Create parent folder if necessary
-    full_path = os.path.join(dev_folder_path, repo_name)
+    full_path = os.path.join(dev_folder_path, sys.argv[1])
     os.makedirs(full_path, exist_ok=True)
 
     # Initialize git repository
     stdout, stderr = run_command(f"cd {full_path}; git init .")
     if stderr.lower():
-        print(f"Error initializing git: {stderr}")
+        print(f"Error initializing git: {stdout} {stderr}")
         # sys.exit(1)
 
     # Create main.py
     stdout, stderr = run_command(f"touch {full_path}/main.py")
     if stderr.lower():
-        print(f"Error creating main.py: {stderr}")
+        print(f"Error creating main.py: {stdout} {stderr}")
         # sys.exit(1)
 
     # Make the first commit
@@ -44,21 +44,28 @@ def main():
         f"cd {full_path} && git add . && git commit -m 'Initial commit'"
     )
     if stderr.lower():
-        print(f"Error making the first commit: {stderr}")
+        print(f"Error making the first commit: {stdout} {stderr}")
         # sys.exit(1)
 
     # Create GitHub repository and set as default push destination
     stdout, stderr = run_command(
-        f"cd {full_path}; gh repo create {repo_name} --confirm --private --push --source ."
+        f"cd {full_path}; gh repo create {repo_name} --private --source=. --remote=origin"
     )
     if stderr.lower():
-        print(f"Error creating GitHub repo: {stderr}")
+        print(f"Error creating GitHub repo: {stdout} {stderr}")
+        # sys.exit(1)
+
+    stdout, stderr = run_command(
+        f"cd {full_path}; git push --set-upstream origin master"
+    )
+    if stderr.lower():
+        print(f"Error pushing GitHub repo: {stdout} {stderr}")
         # sys.exit(1)
 
     # Open folder in VSCode
     stdout, stderr = run_command(f"code {full_path}")
     if stderr.lower():
-        print(f"Error opening in VSCode: {stderr}")
+        print(f"Error opening in VSCode: {stdout} {stderr}")
         # sys.exit(1)
 
 
