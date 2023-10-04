@@ -1,8 +1,26 @@
 import subprocess
 import sys
 import os
+import json
+from os import path
 
-dev_folder_path = "/home/pimania/Dev/"
+
+def getConfig():
+    configFileName = getAbsPath("config.json")
+    with open(configFileName) as config:
+        config = json.loads(config.read())
+
+    return config
+
+
+def getAbsPath(relPath):
+    basepath = path.dirname(__file__)
+    fullPath = path.abspath(path.join(basepath, relPath))
+
+    return fullPath
+
+
+dev_folder_path = getConfig()["dev_folder_path"]
 
 
 def run_command(command):
