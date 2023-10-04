@@ -99,7 +99,7 @@ def main():
         repoPath = args.repoPath
     else:
         print(
-            "Missing repository name. Usage: python script.py nameOfRepo or parentFolder/nameOfRepo"
+            "Missing repository name. Usage: python main.py nameOfRepo or parentFolder/nameOfRepo"
         )
         return
 
