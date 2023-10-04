@@ -1,3 +1,5 @@
 {
-    "dev_folder_path": "/home/pimania/Dev/"
+    "dev_folder_path": "/home/pimania/Dev/",
+    "maxDepth": 3,
+    "firstFileName": "main.py"
 }

@@ -34,18 +34,30 @@ def run_command(command):
     return stdout, stderr
 
 
-def open_subfolder(base_dir, pattern):
+def open_subfolder(base_dir, pattern, foldersToSearch=[]):
     # Convert pattern to lowercase for case-insensitive search
     pattern = pattern.lower()
     pattern = "*" + pattern + "*"
     pattern = pattern.replace("/", "*/*")
 
+    maxDepth = getConfig()["maxDepth"]
     matching_folders = []
-
     for root, dirs, _ in os.walk(base_dir):
+        current_depth = root[len(base_dir) :].count(os.sep)
+
+        if current_depth == maxDepth:
+            del dirs[:]
+            continue
         for dir in dirs:
             # Build the relative path from base_dir to the directory
-            rel_path = os.path.relpath(os.path.join(root, dir), base_dir)
+            currentDirPath = os.path.join(root, dir)
+            if foldersToSearch:
+                validPath = (
+                    len([dir for dir in foldersToSearch if dir in currentDirPath]) > 0
+                )
+                if not validPath:
+                    continue
+            rel_path = os.path.relpath(currentDirPath, base_dir)
 
             # Convert to lowercase for case-insensitive comparison
             lower_rel_path = rel_path.lower()
@@ -53,8 +65,7 @@ def open_subfolder(base_dir, pattern):
             # Use fnmatch to find directories that match the pattern
             sameDepth = pattern.count("/") == lower_rel_path.count("/")
             if fnmatch.fnmatch(lower_rel_path, pattern) and sameDepth:
-                full_path = os.path.join(root, dir)
-                matching_folders.append(full_path)
+                matching_folders.append(currentDirPath)
 
     if len(matching_folders) == 1:
         run_command(f"code '{matching_folders[0]}'")
@@ -70,7 +81,7 @@ def open_subfolder(base_dir, pattern):
             selectedFolder = int(filter) - 1
             run_command(f"code '{matching_folders[selectedFolder]}'")
         else:
-            open_subfolder(base_dir, filter)
+            open_subfolder(base_dir, filter, matching_folders)
 
 
 def main():
@@ -112,9 +123,9 @@ def main():
     run_command(f"cd {full_path}; git init")
 
     if len([name for name in os.listdir(full_path) if name != ".git"]) == 0:
-        run_command(f"touch {full_path}/main.py")
+        run_command(f"touch {full_path}/" + getConfig()["firstFileName"])
 
-    run_command(f"code `{full_path}`")
+    run_command(f"code '{full_path}'")
 
     # Check if a remote repository exists
     stdout = run_command(f"cd {full_path}; git remote -v")[0]
