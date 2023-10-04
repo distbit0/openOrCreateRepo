@@ -11,7 +11,8 @@ def run_command(command):
         command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     stdout, stderr = process.communicate()
-    return stdout.decode("utf-8"), stderr.decode("utf-8")
+    print(stdout.decode("utf-8"), stderr.decode("utf-8"))
+    return stdout, stderr
 
 
 def main():
@@ -19,54 +20,34 @@ def main():
         print(
             "Missing repository name. Usage: python script.py nameOfRepo or parentFolder/nameOfRepo"
         )
-        # sys.exit(1)
-
-    repo_name = sys.argv[1].split("/")[-1]
 
     # Create parent folder if necessary
     full_path = os.path.join(dev_folder_path, sys.argv[1])
+    repo_name = sys.argv[1].split("/")[-1]
     os.makedirs(full_path, exist_ok=True)
 
     # Initialize git repository
-    stdout, stderr = run_command(f"cd {full_path}; git init .")
-    if stderr.lower():
-        print(f"Error initializing git: {stdout} {stderr}")
-        # sys.exit(1)
+    run_command(f"cd {full_path}; git init .")
 
-    # Create main.py
-    stdout, stderr = run_command(f"touch {full_path}/main.py")
-    if stderr.lower():
-        print(f"Error creating main.py: {stdout} {stderr}")
-        # sys.exit(1)
+    if len([name for name in os.listdir(full_path) if name != ".git"]) == 0:
+        run_command(f"touch {full_path}/main.py")
 
     # Make the first commit
-    stdout, stderr = run_command(
-        f"cd {full_path} && git add . && git commit -m 'Initial commit'"
-    )
-    if stderr.lower():
-        print(f"Error making the first commit: {stdout} {stderr}")
-        # sys.exit(1)
+    run_command(f"cd {full_path} && git add . && git commit -m 'Initial commit'")
 
-    # Create GitHub repository and set as default push destination
-    stdout, stderr = run_command(
-        f"cd {full_path}; gh repo create {repo_name} --private --source=. --remote=origin"
-    )
-    if stderr.lower():
-        print(f"Error creating GitHub repo: {stdout} {stderr}")
-        # sys.exit(1)
+    # Check if a remote repository exists
+    stdout = run_command(f"cd {full_path}; git remote -v")[0]
 
-    stdout, stderr = run_command(
-        f"cd {full_path}; git push --set-upstream origin master"
-    )
-    if stderr.lower():
-        print(f"Error pushing GitHub repo: {stdout} {stderr}")
-        # sys.exit(1)
+    # Create GitHub repository and set as default push destination only if no remote repo exists
+    if not stdout.strip():
+        run_command(
+            f"cd {full_path}; gh repo create {repo_name} --private --source=. --remote=origin"
+        )
+
+    run_command(f"cd {full_path}; git push --set-upstream origin master")
 
     # Open folder in VSCode
-    stdout, stderr = run_command(f"code {full_path}")
-    if stderr.lower():
-        print(f"Error opening in VSCode: {stdout} {stderr}")
-        # sys.exit(1)
+    run_command(f"code {full_path}")
 
 
 if __name__ == "__main__":
