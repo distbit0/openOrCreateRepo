@@ -86,10 +86,8 @@ def main():
     args = parser.parse_args()
 
     if args.open:
-        if args.repoPath:
-            open_subfolder(dev_folder_path, args.repoPath)
-        else:
-            print("Error: -o flag requires a repoPath.")
+        repoPath = args.repoPath if args.repoPath else ""
+        open_subfolder(dev_folder_path, repoPath)
         return
 
     if args.repoPath:
@@ -99,6 +97,7 @@ def main():
         print(
             "Missing repository name. Usage: python script.py nameOfRepo or parentFolder/nameOfRepo"
         )
+        return
 
     # Create parent folder if necessary
     full_path = os.path.join(dev_folder_path, repoPath)
