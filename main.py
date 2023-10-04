@@ -62,7 +62,8 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
                 matching_folders.append(currentDirPath)
 
     if len(matching_folders) == 1:
-        if os.path.exists(os.path.join(matching_folders[0], ".git")):
+        folderIsGitRepo = os.path.exists(os.path.join(matching_folders[0], ".git"))
+        if folderIsGitRepo or getConfig()["openNonGitFolders"]:
             run_command(f"code '{matching_folders[0]}'")
         else:
             relPath = matching_folders[0].replace(dev_folder_path, "").lower()
@@ -80,7 +81,10 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
         filter = input("\n\tFilter: ")
         if filter in [str(i + 1) for i in range(len(matching_folders))]:
             selectedFolder = int(filter) - 1
-            if os.path.exists(os.path.join(matching_folders[selectedFolder], ".git")):
+            folderIsGitRepo = os.path.exists(
+                os.path.join(matching_folders[selectedFolder], ".git")
+            )
+            if folderIsGitRepo or getConfig()["openNonGitFolders"]:
                 run_command(f"code '{matching_folders[selectedFolder]}'")
             else:
                 relPath = (

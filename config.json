@@ -1,5 +1,6 @@
 {
     "dev_folder_path": "/home/pimania/Dev/",
     "maxDepth": 50,
-    "firstFileName": "main.py"
+    "firstFileName": "main.py",
+    "openNonGitFolders": false
 }
