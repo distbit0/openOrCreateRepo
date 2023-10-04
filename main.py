@@ -35,11 +35,9 @@ def run_command(command):
 
 
 def open_subfolder(base_dir, pattern, additionalPatterns=[]):
-    # Convert pattern to lowercase for case-insensitive search
     patterns = list(additionalPatterns)
     patterns.append("*" + pattern.replace("/", "*/*").lower() + "*")
     maxPatternDepth = max([pattern.count("/") for pattern in patterns])
-
     maxDepth = min(getConfig()["maxDepth"], maxPatternDepth)
     matching_folders = []
     for root, dirs, _ in os.walk(base_dir):
@@ -64,10 +62,17 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
                 matching_folders.append(currentDirPath)
 
     if len(matching_folders) == 1:
-        run_command(f"code '{matching_folders[0]}'")
+        if os.path.exists(os.path.join(matching_folders[0], ".git")):
+            run_command(f"code '{matching_folders[0]}'")
+        else:
+            relPath = matching_folders[0].replace(dev_folder_path, "").lower()
+            patterns.append(relPath + "/*")
+            open_subfolder(base_dir, "", patterns)
     else:
         if len(matching_folders) == 0:
+            print(patterns)
             print("No matching folders found.")
+            patterns = []
         else:
             print("\nMultiple matching folders found:\n")
         for i, folder in enumerate(matching_folders):
@@ -75,7 +80,16 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
         filter = input("\n\tFilter: ")
         if filter in [str(i + 1) for i in range(len(matching_folders))]:
             selectedFolder = int(filter) - 1
-            run_command(f"code '{matching_folders[selectedFolder]}'")
+            if os.path.exists(os.path.join(matching_folders[selectedFolder], ".git")):
+                run_command(f"code '{matching_folders[selectedFolder]}'")
+            else:
+                relPath = (
+                    matching_folders[selectedFolder]
+                    .replace(dev_folder_path, "")
+                    .lower()
+                )
+                patterns.append(relPath + "/*")
+                open_subfolder(base_dir, "", patterns)
         else:
             open_subfolder(base_dir, filter, patterns)
 
