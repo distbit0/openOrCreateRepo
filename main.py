@@ -58,8 +58,11 @@ def open_subfolder(base_dir, pattern):
 
     if len(matching_folders) == 1:
         run_command(f"code '{matching_folders[0]}'")
-    elif matching_folders:
-        print("\nMultiple matching folders found:\n")
+    else:
+        if len(matching_folders) == 0:
+            print("No matching folders found.")
+        else:
+            print("\nMultiple matching folders found:\n")
         for i, folder in enumerate(matching_folders):
             print("\t" + str(i + 1) + "  " + folder.replace(dev_folder_path, ""))
         filter = input("\n\tFilter: ")
@@ -68,9 +71,6 @@ def open_subfolder(base_dir, pattern):
             run_command(f"code '{matching_folders[selectedFolder]}'")
         else:
             open_subfolder(base_dir, filter)
-
-    else:
-        print("No matching folder(s) found.")
 
 
 def main():
