@@ -62,7 +62,7 @@ def open_subfolder(base_dir, pattern):
     elif matching_folders:
         print("Multiple matching folders found:")
         for folder in matching_folders:
-            print(folder)
+            print(folder.replace(dev_folder_path, ""))
     else:
         print("No matching folder found.")
 
