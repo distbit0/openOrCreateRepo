@@ -34,37 +34,33 @@ def run_command(command):
     return stdout, stderr
 
 
-def open_subfolder(base_dir, pattern, foldersToSearch=[]):
+def open_subfolder(base_dir, pattern, additionalPatterns=[]):
     # Convert pattern to lowercase for case-insensitive search
-    pattern = pattern.lower()
-    pattern = "*" + pattern + "*"
-    pattern = pattern.replace("/", "*/*")
+    patterns = list(additionalPatterns)
+    patterns.append("*" + pattern.replace("/", "*/*").lower() + "*")
+    maxPatternDepth = max([pattern.count("/") for pattern in patterns])
 
-    maxDepth = getConfig()["maxDepth"]
+    maxDepth = min(getConfig()["maxDepth"], maxPatternDepth)
     matching_folders = []
     for root, dirs, _ in os.walk(base_dir):
-        current_depth = root[len(base_dir) :].count(os.sep)
+        current_depth = root[len(base_dir) - 1 :].rstrip(os.sep).count(os.sep)
 
-        if current_depth == maxDepth:
-            del dirs[:]
+        if current_depth > maxDepth:
             continue
+
         for dir in dirs:
             # Build the relative path from base_dir to the directory
             currentDirPath = os.path.join(root, dir)
-            if foldersToSearch:
-                validPath = (
-                    len([dir for dir in foldersToSearch if dir in currentDirPath]) > 0
-                )
-                if not validPath:
-                    continue
-            rel_path = os.path.relpath(currentDirPath, base_dir)
+            rel_path = os.path.relpath(currentDirPath, base_dir).lower()
 
-            # Convert to lowercase for case-insensitive comparison
-            lower_rel_path = rel_path.lower()
-
+            matches = True
             # Use fnmatch to find directories that match the pattern
-            sameDepth = pattern.count("/") == lower_rel_path.count("/")
-            if fnmatch.fnmatch(lower_rel_path, pattern) and sameDepth:
+            for pattern in patterns:
+                if not fnmatch.fnmatch(rel_path, pattern):
+                    matches = False
+                    break
+
+            if matches:
                 matching_folders.append(currentDirPath)
 
     if len(matching_folders) == 1:
@@ -81,7 +77,7 @@ def open_subfolder(base_dir, pattern, foldersToSearch=[]):
             selectedFolder = int(filter) - 1
             run_command(f"code '{matching_folders[selectedFolder]}'")
         else:
-            open_subfolder(base_dir, filter, matching_folders)
+            open_subfolder(base_dir, filter, patterns)
 
 
 def main():
