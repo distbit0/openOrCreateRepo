@@ -57,7 +57,7 @@ def open_subfolder(base_dir, pattern):
                 matching_folders.append(full_path)
 
     if len(matching_folders) == 1:
-        run_command(f"code {matching_folders[0]}")
+        run_command(f"code '{matching_folders[0]}'")
     elif matching_folders:
         print("\nMultiple matching folders found:\n")
         for i, folder in enumerate(matching_folders):
@@ -65,7 +65,7 @@ def open_subfolder(base_dir, pattern):
         filter = input("\n\tFilter: ")
         if filter in [str(i + 1) for i in range(len(matching_folders))]:
             selectedFolder = int(filter) - 1
-            run_command(f"code {matching_folders[selectedFolder]}")
+            run_command(f"code '{matching_folders[selectedFolder]}'")
         else:
             open_subfolder(base_dir, filter)
 
@@ -97,7 +97,6 @@ def main():
 
     if args.repoPath:
         repoPath = args.repoPath
-        # Your existing code to handle repoPath
     else:
         print(
             "Missing repository name. Usage: python script.py nameOfRepo or parentFolder/nameOfRepo"
@@ -115,7 +114,7 @@ def main():
     if len([name for name in os.listdir(full_path) if name != ".git"]) == 0:
         run_command(f"touch {full_path}/main.py")
 
-    run_command(f"code {full_path}")
+    run_command(f"code `{full_path}`")
 
     # Check if a remote repository exists
     stdout = run_command(f"cd {full_path}; git remote -v")[0]
