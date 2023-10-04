@@ -4,6 +4,7 @@ import json
 from os import path
 import fnmatch
 import argparse
+import glob
 
 
 def getConfig():
@@ -40,32 +41,29 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
     maxPatternDepth = max([pattern.count("/") for pattern in patterns])
     maxDepth = min(getConfig()["maxDepth"], maxPatternDepth)
     matching_folders = []
-    for root, dirs, _ in os.walk(base_dir):
-        current_depth = root[len(base_dir) - 1 :].rstrip(os.sep).count(os.sep)
+    globPattern = base_dir.rstrip(os.sep) + os.sep + ("*" + os.sep) * (maxDepth + 1)
+    print(globPattern)
+    for currentDirPath in glob.iglob(globPattern, recursive=True):
+        # Build the relative path from base_dir to the directory
+        rel_path = os.path.relpath(currentDirPath, base_dir).lower()
+        # print(rel_path)
 
-        if current_depth > maxDepth:
-            continue
+        matches = True
+        # Use fnmatch to find directories that match the pattern
+        for pattern in patterns:
+            if not fnmatch.fnmatch(rel_path, pattern):
+                matches = False
+                break
 
-        for dir in dirs:
-            # Build the relative path from base_dir to the directory
-            currentDirPath = os.path.join(root, dir)
-            rel_path = os.path.relpath(currentDirPath, base_dir).lower()
-
-            matches = True
-            # Use fnmatch to find directories that match the pattern
-            for pattern in patterns:
-                if not fnmatch.fnmatch(rel_path, pattern):
-                    matches = False
-                    break
-
-            if matches:
-                matching_folders.append(currentDirPath)
+        if matches:
+            matching_folders.append(currentDirPath.rstrip(os.sep))
 
     if len(matching_folders) == 1:
         folderIsGitRepo = os.path.exists(os.path.join(matching_folders[0], ".git"))
         if folderIsGitRepo or getConfig()["openNonGitFolders"]:
             run_command(f"code '{matching_folders[0]}'")
         else:
+            print("matching folder found but not a git repo.", matching_folders[0])
             relPath = matching_folders[0].replace(dev_folder_path, "").lower()
             patterns.append(relPath + "/*")
             open_subfolder(base_dir, "", patterns)
@@ -87,6 +85,10 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
             if folderIsGitRepo or getConfig()["openNonGitFolders"]:
                 run_command(f"code '{matching_folders[selectedFolder]}'")
             else:
+                print(
+                    "matching folder found but not a git repo.",
+                    matching_folders[selectedFolder],
+                )
                 relPath = (
                     matching_folders[selectedFolder]
                     .replace(dev_folder_path, "")
