@@ -42,11 +42,10 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
     maxDepth = min(getConfig()["maxDepth"], maxPatternDepth)
     matching_folders = []
     globPattern = base_dir.rstrip(os.sep) + os.sep + ("*" + os.sep) * (maxDepth + 1)
-    print(globPattern)
+
     for currentDirPath in glob.iglob(globPattern, recursive=True):
         # Build the relative path from base_dir to the directory
         rel_path = os.path.relpath(currentDirPath, base_dir).lower()
-        # print(rel_path)
 
         matches = True
         # Use fnmatch to find directories that match the pattern
@@ -72,6 +71,7 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
             print(patterns)
             print("No matching folders found.")
             patterns = []
+            open_subfolder(base_dir, "", patterns)
         else:
             print("\nMultiple matching folders found:\n")
         for i, folder in enumerate(matching_folders):
@@ -96,8 +96,22 @@ def open_subfolder(base_dir, pattern, additionalPatterns=[]):
                 )
                 patterns.append(relPath + "/*")
                 open_subfolder(base_dir, "", patterns)
+        elif filter == "..":
+            filter = goUpOneLevel(patterns)
+            open_subfolder(base_dir, filter, [])
         else:
             open_subfolder(base_dir, filter, patterns)
+
+
+def goUpOneLevel(patterns):
+    maxPatternDepth = max([pattern.count("/") for pattern in patterns])
+    for pattern in patterns:
+        depth = pattern.count("/")
+        if depth == maxPatternDepth:
+            filter = "/".join(pattern.strip("*/").split("/")[:-1])
+
+    print("original", patterns, "final", filter)
+    return filter
 
 
 def main():
