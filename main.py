@@ -63,7 +63,8 @@ def main():
     run_command(f"cd {full_path}; git init")
 
     if len([name for name in os.listdir(full_path) if name != ".git"]) == 0:
-        run_command(f"touch {full_path}/" + getConfig()["firstFileName"])
+        for file in getConfig()["initFiles"]:
+            run_command(f"touch {full_path}/" + file)
 
     run_command(f"code '{full_path}'")
 

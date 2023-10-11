@@ -1,4 +1,8 @@
 {
-    "dev_folder_path": "/home/pimania/Dev/",
-    "firstFileName": "main.py"
+    "dev_folder_path": "/home/pimania/dev/",
+    "initFiles": [
+        "main.py",
+        "README.md",
+        ".gitignore"
+    ]
 }
