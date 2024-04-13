@@ -10,6 +10,7 @@ pnpm-debug.log*
 .pnp.*
 .pnp.js
 .lock-wscript
+*.lock
 .yarn-integrity
 
 # Build and Cache

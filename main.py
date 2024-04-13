@@ -18,11 +18,16 @@ def copy_initial_files(full_path, lang):
 
 
 def edit_pyproject_toml(full_path, repo_name):
+    ## get author string from git
+    name = run_command("git config user.name")[0].strip().decode("utf-8")
+    email = run_command("git config user.email")[0].strip().decode("utf-8")
+    author = f"{name} <{email}>"
     pyproject_toml_path = os.path.join(full_path, "pyproject.toml")
     if os.path.exists(pyproject_toml_path):
         with open(pyproject_toml_path, "r") as file:
             content = file.read()
-        content = content.replace("placeholder-name", repo_name)
+        content = content.replace("placeholder-project-name", repo_name)
+        content = content.replace("placeholder-author", author)
         with open(pyproject_toml_path, "w") as file:
             file.write(content)
 
@@ -36,20 +41,17 @@ def create_repository(repoPath):
     return full_path, repo_name
 
 
-def initialize_repository(full_path, lang, repo_name):
-    copy_initial_files(full_path, lang)
-
+def run_init_commands(full_path, lang, repo_name):
+    edit_pyproject_toml(full_path, repo_name)
     config = getConfig()
     if lang in config["initCommands"]:
         for command in config["initCommands"][lang]:
             run_command(f"cd {full_path}; {command}")
 
-    edit_pyproject_toml(full_path, repo_name)
 
-
-def open_code_editor(full_path):
+def open_code_editor(full_path, lang):
     run_command(f"code '{full_path}'")
-    run_command(f"code '{full_path}/src/main.*'")
+    run_command(f"code '{full_path}/src/main.{lang}'")
 
 
 def create_github_repository(full_path, repo_name):
@@ -68,8 +70,9 @@ def main():
         return
 
     full_path, repo_name = create_repository(args.repoPath)
-    initialize_repository(full_path, args.lang, repo_name)
-    open_code_editor(full_path)
+    copy_initial_files(full_path, args.lang)
+    open_code_editor(full_path, args.lang)
+    run_init_commands(full_path, args.lang, repo_name)
     create_github_repository(full_path, repo_name)
 
 
