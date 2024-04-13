@@ -49,6 +49,7 @@ def initialize_repository(full_path, lang, repo_name):
 
 def open_code_editor(full_path):
     run_command(f"code '{full_path}'")
+    run_command(f"code '{full_path}/src/main.*'")
 
 
 def create_github_repository(full_path, repo_name):
