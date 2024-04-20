@@ -25,6 +25,7 @@ dist
 .fusebox/
 .dynamodb/
 .serverless/
+tmp/
 
 # Coverage and Report
 coverage/

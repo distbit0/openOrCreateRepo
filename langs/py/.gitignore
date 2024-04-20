@@ -58,6 +58,7 @@ pip-delete-this-directory.txt
 pip-log.txt
 target/
 var/
+tmp/
 *.lock
 
 # Compiled files
