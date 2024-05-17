@@ -40,6 +40,7 @@ profile-venv/
 .DS_Store
 .eggs/
 .coverage
+nohup.out
 .coverage.*
 .hypothesis/
 .installed.cfg
