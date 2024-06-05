@@ -1,1 +1,1 @@
-Be excellent to each other.
+be excellent to each other
