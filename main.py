@@ -47,14 +47,8 @@ def run_init_commands(full_path, lang, repo_name):
     config = getConfig()
     if lang in config["initCommands"]:
         for command in config["initCommands"][lang]:
-            if command.startswith("poetry"):
-                # Replace poetry commands with uv commands
-                if command.startswith("poetry add"):
-                    command = command.replace("poetry add", "uv add")
-                elif command == "poetry install":
-                    command = "uv sync"
             run_command(f"cd {full_path}; {command}")
-    
+
     # Initialize uv project
     run_command(f"cd {full_path}; uv sync")
 
