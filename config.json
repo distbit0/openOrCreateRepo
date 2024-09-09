@@ -2,7 +2,7 @@
     "dev_folder_path": "/home/pimania/dev/",
     "initCommands": {
         "py": [
-            "poetry install"
+            "uv sync"
         ],
         "js": [
             "npm init -y"
