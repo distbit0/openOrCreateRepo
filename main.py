@@ -27,6 +27,7 @@ def edit_pyproject_toml(full_path, repo_name):
         with open(pyproject_toml_path, "r") as file:
             content = file.read()
         content = content.replace("placeholder-project-name", repo_name)
+        content = content.replace("placeholder-name", repo_name)  # Add this line
         content = content.replace("placeholder-author", name)
         content = content.replace("placeholder@email.com", email)
         with open(pyproject_toml_path, "w") as file:
