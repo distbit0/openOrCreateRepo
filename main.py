@@ -17,21 +17,27 @@ def copy_initial_files(full_path, lang):
             shutil.copy2(src_path, dst_path)
 
 
-def edit_pyproject_toml(full_path, repo_name):
+def replace_placeholders(full_path, repo_name):
     ## get author string from git
     name = run_command("git config user.name")[0].strip().decode("utf-8")
     email = run_command("git config user.email")[0].strip().decode("utf-8")
     author = f"{name} <{email}>"
-    pyproject_toml_path = os.path.join(full_path, "pyproject.toml")
-    if os.path.exists(pyproject_toml_path):
-        with open(pyproject_toml_path, "r") as file:
-            content = file.read()
-        content = content.replace("placeholder-project-name", repo_name)
-        content = content.replace("placeholder-name", repo_name)  # Add this line
-        content = content.replace("placeholder-author", name)
-        content = content.replace("placeholder@email.com", email)
-        with open(pyproject_toml_path, "w") as file:
-            file.write(content)
+    
+    files_to_edit = [
+        os.path.join(full_path, "pyproject.toml"),
+        os.path.join(full_path, "src", "main.py")
+    ]
+    
+    for file_path in files_to_edit:
+        if os.path.exists(file_path):
+            with open(file_path, "r") as file:
+                content = file.read()
+            content = content.replace("placeholder-project-name", repo_name)
+            content = content.replace("placeholder-name", repo_name)
+            content = content.replace("placeholder-author", name)
+            content = content.replace("placeholder@email.com", email)
+            with open(file_path, "w") as file:
+                file.write(content)
 
 
 def create_repository(repoPath):
@@ -44,7 +50,7 @@ def create_repository(repoPath):
 
 
 def run_init_commands(full_path, lang, repo_name):
-    edit_pyproject_toml(full_path, repo_name)
+    replace_placeholders(full_path, repo_name)
     config = getConfig()
     if lang in config["initCommands"]:
         for command in config["initCommands"][lang]:

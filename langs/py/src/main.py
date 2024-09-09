@@ -8,7 +8,7 @@ def main():
     logger.info("Starting the application")
     with pysnooper.snoop():
         # Your main application logic here
-        print("Hello, uv!")
+        print("Hello from placeholder-name!")
 
 
 if __name__ == "__main__":
