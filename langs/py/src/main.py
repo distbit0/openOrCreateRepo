@@ -1,10 +1,14 @@
 import pysnooper
-import utils
-from utils import logger as logger
+from loguru import logger
+from dotenv import load_dotenv
 
 
 def main():
-    pass
+    load_dotenv()
+    logger.info("Starting the application")
+    with pysnooper.snoop():
+        # Your main application logic here
+        print("Hello, uv!")
 
 
 if __name__ == "__main__":
