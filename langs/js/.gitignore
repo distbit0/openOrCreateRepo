@@ -27,6 +27,7 @@ dist
 .serverless/
 nohup.out
 tmp/
+.aider*
 
 # Coverage and Report
 coverage/

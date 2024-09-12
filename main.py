@@ -22,12 +22,12 @@ def replace_placeholders(full_path, repo_name):
     name = run_command("git config user.name")[0].strip().decode("utf-8")
     email = run_command("git config user.email")[0].strip().decode("utf-8")
     author = f"{name} <{email}>"
-    
+
     files_to_edit = [
         os.path.join(full_path, "pyproject.toml"),
-        os.path.join(full_path, "src", "main.py")
+        os.path.join(full_path, "src", "main.py"),
     ]
-    
+
     for file_path in files_to_edit:
         if os.path.exists(file_path):
             with open(file_path, "r") as file:

@@ -15,6 +15,7 @@ wheels/
 pip-wheel-metadata/
 share/python-wheels/
 MANIFEST
+.aider*
 
 # Log files
 *.log
