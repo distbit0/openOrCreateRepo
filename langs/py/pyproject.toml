@@ -6,9 +6,10 @@ authors = [
     {name = "placeholder-author", email = "placeholder@email.com"},
 ]
 dependencies = [
-    "python-dotenv>=1.0.1,<2.0.0",
-    "loguru>=0.7.2,<0.8.0",
-    "PySnooper>=1.2.0,<2.0.0",
+    "python-dotenv",
+    "loguru",
+    "PySnooper",
+    "requests",
 ]
 requires-python = ">=3.12"
 license = {text = "UNLICENCE"}
