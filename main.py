@@ -61,8 +61,8 @@ def run_init_commands(full_path, lang, repo_name):
 
 
 def open_code_editor(full_path, lang):
-    run_command(f"code '{full_path}'")
-    run_command(f"code '{full_path}/src/main.{lang}'")
+    run_command(f"{getConfig()['editorCommand']} '{full_path}'")
+    run_command(f"{getConfig()['editorCommand']} '{full_path}/src/main.{lang}'")
 
 
 def create_github_repository(full_path, repo_name):

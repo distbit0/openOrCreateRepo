@@ -7,5 +7,6 @@
         "js": [
             "npm init -y"
         ]
-    }
+    },
+    "editorCommand": "windsurf"
 }
