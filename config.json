@@ -8,5 +8,5 @@
             "npm init -y"
         ]
     },
-    "editorCommand": "windsurf"
+    "editorCommand": "cursor"
 }
