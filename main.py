@@ -72,7 +72,7 @@ def create_github_repository(full_path, repo_name):
         run_command(
             f"cd {full_path}; gh repo create {repo_name} --private --source=. --remote=origin"
         )
-        run_command(f"cd {full_path}; git push --set-upstream origin master")
+        run_command(f"cd {full_path}; git push --set-upstream origin main")
 
 
 def main():
