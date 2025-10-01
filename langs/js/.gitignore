@@ -12,6 +12,7 @@ pnpm-debug.log*
 .lock-wscript
 *.lock
 .yarn-integrity
+.vscode/
 
 # Build and Cache
 build/

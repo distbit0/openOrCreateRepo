@@ -1,12 +1,8 @@
 {
-    "dev_folder_path": "/home/pimania/dev/",
-    "initCommands": {
-        "py": [
-            "uv sync"
-        ],
-        "js": [
-            "npm init -y"
-        ]
-    },
-    "editorCommand": "cursor"
+  "dev_folder_path": "/home/pimania/dev/",
+  "initCommands": {
+    "py": ["uv sync"],
+    "js": ["npm init -y"]
+  },
+  "editorCommand": "code"
 }
