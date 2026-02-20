@@ -17,7 +17,10 @@ def configure_logging():
         backtrace=True,
         diagnose=True,
     )
-    logger.add(sys.stdout, format="{level} | {message}")
+    logger.add(
+        sys.stdout,
+        format="<level>{time:HH:mm:ss} {level.name:.1} {function}:{line}</level> | {message}",
+    )
 
 
 configure_logging()
