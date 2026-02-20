@@ -17,6 +17,7 @@ def configure_logging():
         backtrace=True,
         diagnose=True,
     )
+    logger.add(sys.stdout, format="{level} | {message}")
 
 
 configure_logging()
